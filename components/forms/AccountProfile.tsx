@@ -37,8 +37,8 @@ interface Props {
 
 const AccountProfile = ({ user, btnTitle }: Props) => {
 
-    const [files, setFiles] = useState<File[]>([]);
     const { startUpload } = useUploadThing("media");
+    const [files, setFiles] = useState<File[]>([]);
 
     const router = useRouter();
     const pathname = usePathname();
@@ -46,10 +46,10 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     const form = useForm({
         resolver: zodResolver(UserValidation),
         defaultValues: {
-            profile_photo: user?.image || "",
-            username: user?.username || "",
-            bio: user?.bio || "",
-            name: user?.name || ""
+            profile_photo: user?.image ? user.image : "",
+            name: user?.name ? user.name : "",
+            username: user?.username ? user.username : "",
+            bio: user?.bio ? user.bio : "",
         }
     });
 
@@ -58,12 +58,12 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
         const fileReader = new FileReader();
 
-        if(e.target.files && e.target.files.length > 0) {
+        if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
 
             setFiles(Array.from(e.target.files));
 
-            if(!file.type.includes('image')) return;
+            if (!file.type.includes('image')) return;
 
             fileReader.onload = async (event) => {
                 const imageDataUrl = event.target?.result?.toString() || '';
@@ -80,10 +80,10 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
         const hasImageChanged = isBase64Image(blob);
 
-        if(hasImageChanged) {
+        if (hasImageChanged) {
             const imgRes = await startUpload(files);
 
-            if(imgRes && imgRes[0].fileUrl) {
+            if (imgRes && imgRes[0].fileUrl) {
                 values.profile_photo = imgRes[0].fileUrl;
             }
         }
@@ -97,7 +97,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             path: pathname
         });
 
-        if(pathname === '/profile/edit') {
+        if (pathname === '/profile/edit') {
             router.back();
         } else {
             router.push('/');
